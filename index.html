@@ -67,13 +67,51 @@
 
   .avatar{margin-top:36px;width:clamp(170px,24vh,270px);flex:0 0 auto}
   .avatar svg{width:100%;height:auto;display:block}
-  #eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
+  .eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
   @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
-  #mouth{transform-box:fill-box;transform-origin:center}
-  .talking #mouth{animation:talk .18s infinite alternate}
-  @keyframes talk{from{transform:scaleY(.4)}to{transform:scaleY(1.6)}}
-  #head{transform-box:view-box;transform-origin:120px 150px}
-  .nod #head{animation:nod .5s ease-in-out 2}
+  .mouth{transform-box:fill-box;transform-origin:center;transition:transform .07s}
+  .head{transform-box:view-box;transform-origin:120px 150px}
+  .nod .head{animation:nod .5s ease-in-out 2}
+  /* 一文字ずつ喋る */
+  #qText .c{opacity:0;transition:opacity .08s}
+  #qText .c.on{opacity:1}
+  /* ===== 宇宙人（5%） ===== */
+  .avatar .fig{display:none}
+  .avatar[data-who="uncle"] #uncleFig,.avatar[data-who="woman"] #womanFig,
+  .avatar[data-who="young"] #youngFig,.avatar[data-who="alien"] #alienFig{display:inline}
+  /* 面接官えらび */
+  .who-btn{width:100%;max-width:900px;display:flex;align-items:center;gap:18px;background:var(--paper);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:10px 26px 10px 14px;text-align:left;border:3px solid transparent;min-height:96px}
+  .who-btn:active{border-color:var(--accent);transform:scale(.99)}
+  .who-btn svg{width:76px;height:auto;flex:0 0 auto}
+  .wb-text{display:flex;flex-direction:column;flex:1}
+  .wb-k{font-size:16px;color:var(--muted)}
+  .wb-name{font-size:24px;font-weight:800;color:var(--navy)}
+  .wb-go{background:var(--navy);color:#fff;border-radius:999px;padding:12px 22px;font-size:19px;font-weight:800;white-space:nowrap}
+  .modal-box.who-box{max-width:860px;display:flex;flex-direction:column;gap:18px}
+  .who-box .secondary{min-height:64px}
+  .who-title{font-size:22px;font-weight:700;text-align:center}
+  .who-title small{font-size:17px;color:var(--muted);font-weight:500}
+  .whos{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .who{background:var(--paper);border-radius:20px;box-shadow:var(--shadow);border:4px solid transparent;padding:10px 6px 12px;
+    display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+  .who.on{border-color:var(--accent)}
+  .who svg{width:100%;max-width:120px;height:auto}
+  .who .wn{font-size:18px;font-weight:800;color:var(--navy)}
+  .who .wl{font-size:14px;color:var(--muted)}
+  .who.locked svg{filter:brightness(0) opacity(.25)}
+  .who.locked .wn{color:var(--muted)}
+  .unlock{background:#fff7e6;border:3px solid var(--accent);border-radius:var(--radius);padding:18px 22px;font-size:22px;font-weight:800;color:var(--accent-2);text-align:center;display:none}
+  .unlock.show{display:block;animation:pop .4s ease-out}
+  .antenna{transform-box:view-box;transform-origin:120px 44px;animation:wobble 2.4s ease-in-out infinite}
+  .talking .antenna{animation-duration:.5s}
+  @keyframes wobble{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  .glow{animation:glow 1.2s ease-in-out infinite alternate}
+  @keyframes glow{from{opacity:.55}to{opacity:1}}
+  #interview.alien .bubble{border-color:#2f9e5b;background:#f0fff4}
+  #interview.alien .bubble::before{border-top-color:#2f9e5b}
+  #interview.alien .bubble::after{border-top-color:#f0fff4}
+  #interview.alien .badge{background:#2f9e5b}
   @keyframes nod{50%{transform:rotate(0) translateY(7px)}}
 
   .answer{display:flex;flex-direction:column;gap:14px;min-height:0}
@@ -91,9 +129,10 @@
 
   /* ===== 結果画面 ===== */
   #result{gap:22px;max-width:1000px;margin:0 auto;width:100%}
-  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
   .stat{background:var(--paper);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);text-align:center}
   .stat .k{font-size:17px;color:var(--muted)}
+  .stat .v.t{font-size:21px;line-height:1.4;padding-top:6px}
   .stat .v{font-size:32px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
   .list{display:flex;flex-direction:column;gap:18px}
   .card{background:var(--paper);border-radius:var(--radius);padding:22px 26px;box-shadow:var(--shadow);border-left:10px solid var(--navy)}
@@ -119,7 +158,12 @@
   .voice-msg{font-size:24px;font-weight:800;color:var(--navy)}
   .voice-sub{font-size:18px;color:var(--muted)}
   .card audio{width:100%;height:54px}
-  .toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:14px 28px;border-radius:999px;font-size:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+  .modal{position:fixed;inset:0;background:rgba(20,28,45,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:24px}
+  .modal.show{display:flex}
+  .modal-box{background:var(--paper);border-radius:28px;padding:34px 30px 28px;width:100%;max-width:560px;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:pop .2s ease-out}
+  #modalMsg{margin:0 0 26px;font-size:24px;font-weight:700;white-space:pre-line;text-align:center;line-height:1.6}
+  .modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .toast{z-index:300;position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:14px 28px;border-radius:999px;font-size:20px;opacity:0;pointer-events:none;transition:opacity .3s}
   .toast.show{opacity:1}
 </style>
 </head>
@@ -162,6 +206,12 @@
       <span class="desc">王道と意地悪がランダムに混ざった本番形式</span>
     </button>
   </div>
+
+  <button class="who-btn" id="whoBtn">
+    <svg id="whoBtnFig" viewBox="20 0 200 270"></svg>
+    <span class="wb-text"><span class="wb-k">今の面接官</span><span class="wb-name" id="whoBtnName"></span></span>
+    <span class="wb-go">面接官を変更する ▶</span>
+  </button>
 </section>
 
 <!-- ===== 面接画面 ===== -->
@@ -170,6 +220,7 @@
     <span class="badge" id="modeBadge">王道モード</span>
     <span class="progress" id="progressText">第1問 / 5</span>
     <span class="spacer"></span>
+    <button class="quit" id="soundBtn">🔊 声あり</button>
     <button class="quit" id="quitBtn">中断する</button>
   </div>
   <div class="bar"><i id="barFill"></i></div>
@@ -179,15 +230,16 @@
       <div class="bubble" id="bubble">
         <div class="bubble-inner" id="bubbleInner"><p id="qText"></p></div>
       </div>
-      <div class="avatar" id="avatar">
+      <div class="avatar" id="avatar" data-who="uncle">
         <svg viewBox="0 0 240 270" aria-label="面接官">
+         <g id="uncleFig" class="fig">
           <!-- 体・スーツ -->
           <path d="M20 270 C24 210 60 192 120 192 C180 192 216 210 220 270Z" fill="#2d3a4f"/>
           <path d="M96 194 L120 240 L144 194Z" fill="#fff"/>
           <path d="M114 202 L126 202 L130 214 L124 250 L116 250 L110 214Z" fill="#b83232"/>
           <path d="M96 194 L120 240 L84 214Z" fill="#3d4d66"/><path d="M144 194 L120 240 L156 214Z" fill="#3d4d66"/>
           <rect x="106" y="172" width="28" height="26" rx="8" fill="#e8b88c"/>
-          <g id="head">
+          <g class="head">
             <!-- 耳 -->
             <ellipse cx="62" cy="118" rx="12" ry="18" fill="#e8b88c"/><ellipse cx="178" cy="118" rx="12" ry="18" fill="#e8b88c"/>
             <!-- 顔 -->
@@ -200,7 +252,7 @@
             <path d="M84 94 Q98 86 110 93" stroke="#5f646d" stroke-width="5" fill="none" stroke-linecap="round"/>
             <path d="M130 93 Q142 86 156 94" stroke="#5f646d" stroke-width="5" fill="none" stroke-linecap="round"/>
             <!-- 目 -->
-            <g id="eyes"><ellipse cx="98" cy="110" rx="5" ry="6" fill="#2b2b2b"/><ellipse cx="142" cy="110" rx="5" ry="6" fill="#2b2b2b"/></g>
+            <g class="eyes"><ellipse cx="98" cy="110" rx="5" ry="6" fill="#2b2b2b"/><ellipse cx="142" cy="110" rx="5" ry="6" fill="#2b2b2b"/></g>
             <!-- メガネ -->
             <g stroke="#3a3a3a" stroke-width="3.5" fill="rgba(255,255,255,.18)">
               <rect x="78" y="96" width="38" height="28" rx="9"/><rect x="124" y="96" width="38" height="28" rx="9"/>
@@ -212,8 +264,106 @@
             <!-- ひげ -->
             <path d="M96 148 Q108 140 120 146 Q132 140 144 148 Q132 154 120 150 Q108 154 96 148Z" fill="#6f747d"/>
             <!-- 口 -->
-            <ellipse id="mouth" cx="120" cy="160" rx="9" ry="3" fill="#8a3b3b"/>
+            <ellipse class="mouth" cx="120" cy="160" rx="9" ry="3" fill="#8a3b3b"/>
           </g>
+         
+         </g>
+         <g id="womanFig" class="fig">
+          <path d="M20 270 C24 212 62 196 120 196 C178 196 216 212 220 270Z" fill="#5b6b8c"/>
+          <path d="M92 198 Q120 230 148 198Z" fill="#fff"/>
+          <path d="M92 198 L120 232 L80 218Z" fill="#6f80a3"/><path d="M148 198 L120 232 L160 218Z" fill="#6f80a3"/>
+          <circle cx="120" cy="214" r="4" fill="#e9b949"/>
+          <rect x="108" y="170" width="24" height="30" rx="9" fill="#f6d3b5"/>
+          <g class="head">
+            <!-- 後ろ髪（ボブ） -->
+            <path d="M58 112 C50 60 82 36 120 36 C158 36 190 60 182 112 L188 176 C172 184 154 180 148 170 L92 170 C86 180 68 184 52 176Z" fill="#4a3328"/>
+            <!-- 顔 -->
+            <ellipse cx="120" cy="112" rx="52" ry="62" fill="#f8d8bd"/>
+            <!-- 前髪（流し） -->
+            <path d="M66 104 C62 60 90 42 122 42 C152 42 178 60 174 102 C164 84 148 70 130 64 C120 80 96 94 66 104Z" fill="#4a3328"/>
+            <!-- 眉 -->
+            <path d="M86 94 Q98 88 110 93" stroke="#4a3328" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M130 93 Q142 88 154 94" stroke="#4a3328" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- 目・まつげ -->
+            <g class="eyes">
+              <ellipse cx="98" cy="111" rx="5.5" ry="7" fill="#2b2b2b"/><ellipse cx="142" cy="111" rx="5.5" ry="7" fill="#2b2b2b"/>
+              <circle cx="100" cy="108" r="1.8" fill="#fff"/><circle cx="144" cy="108" r="1.8" fill="#fff"/>
+              <path d="M92.5 107 L87 104 M147.5 107 L153 104" stroke="#2b2b2b" stroke-width="2.2" stroke-linecap="round"/>
+            </g>
+            <!-- 鼻・頬 -->
+            <path d="M120 118 Q117 128 122 130" stroke="#e0a988" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="88" cy="134" rx="9" ry="5" fill="#f4a3a3" opacity=".55"/><ellipse cx="152" cy="134" rx="9" ry="5" fill="#f4a3a3" opacity=".55"/>
+            <!-- 口 -->
+            <g class="mouth"><ellipse cx="120" cy="150" rx="9" ry="3.4" fill="#c2416b"/><ellipse cx="120" cy="152" rx="4.5" ry="1.4" fill="#f08aa6"/></g>
+          </g>
+         </g>
+         <g id="youngFig" class="fig">
+          <path d="M20 270 C24 210 60 194 120 194 C180 194 216 210 220 270Z" fill="#1e3a8a"/>
+          <path d="M98 196 L120 238 L142 196Z" fill="#fff"/>
+          <path d="M115 204 L125 204 L129 215 L123 250 L117 250 L111 215Z" fill="#60a5fa"/>
+          <path d="M98 196 L120 238 L86 214Z" fill="#2848a8"/><path d="M142 196 L120 238 L154 214Z" fill="#2848a8"/>
+          <rect x="107" y="170" width="26" height="30" rx="8" fill="#f1c6a0"/>
+          <g class="head">
+            <!-- 耳 -->
+            <ellipse cx="66" cy="118" rx="10" ry="15" fill="#f1c6a0"/><ellipse cx="174" cy="118" rx="10" ry="15" fill="#f1c6a0"/>
+            <!-- 顔 -->
+            <ellipse cx="120" cy="114" rx="54" ry="63" fill="#f6d0ad"/>
+            <!-- 髪（短め・ツンツン前髪） -->
+            <path d="M64 108 C56 58 86 34 122 34 C158 34 186 56 176 108 C172 88 166 76 160 70 C150 82 136 84 122 76 C112 88 92 90 80 80 C72 88 68 98 64 108Z" fill="#1f1f24"/>
+            <path d="M96 44 L84 30 L108 38Z M124 36 L122 22 L138 36Z M150 44 L162 32 L160 52Z" fill="#1f1f24"/>
+            <!-- 眉（太め） -->
+            <path d="M84 96 Q96 88 108 92" stroke="#1f1f24" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M132 92 Q144 88 156 96" stroke="#1f1f24" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <!-- 目 -->
+            <g class="eyes">
+              <ellipse cx="97" cy="111" rx="5" ry="6.5" fill="#222"/><ellipse cx="143" cy="111" rx="5" ry="6.5" fill="#222"/>
+              <circle cx="99" cy="108" r="1.8" fill="#fff"/><circle cx="145" cy="108" r="1.8" fill="#fff"/>
+            </g>
+            <!-- 鼻 -->
+            <path d="M120 116 Q115 130 122 132" stroke="#dca27e" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- 口（にこっと） -->
+            <g class="mouth"><path d="M108 150 Q120 160 132 150 Q120 155 108 150Z" fill="#8a3b3b"/><ellipse cx="120" cy="152" rx="10" ry="3" fill="#8a3b3b"/></g>
+          </g>
+         </g>
+         <g id="alienFig" class="fig">
+          <!-- 体・スーツ -->
+          <path d="M20 270 C24 212 62 196 120 196 C178 196 216 212 220 270Z" fill="#3c3466"/>
+          <path d="M100 198 L120 236 L140 198Z" fill="#fff"/>
+          <path d="M115 204 L125 204 L129 215 L123 248 L117 248 L111 215Z" fill="#1fb5a6"/>
+          <path d="M100 198 L120 236 L86 216Z" fill="#4d4480"/><path d="M140 198 L120 236 L154 216Z" fill="#4d4480"/>
+          <!-- 首 -->
+          <rect x="110" y="172" width="20" height="30" rx="8" fill="#7cc576"/>
+          <g class="head">
+            <!-- 触角 -->
+            <g class="antenna">
+              <path d="M98 46 Q86 24 74 10" stroke="#5fae5a" stroke-width="5" fill="none" stroke-linecap="round"/>
+              <path d="M142 46 Q154 24 166 10" stroke="#5fae5a" stroke-width="5" fill="none" stroke-linecap="round"/>
+              <circle class="glow" cx="74" cy="10" r="8" fill="#ffe066"/>
+              <circle class="glow" cx="166" cy="10" r="8" fill="#ffe066"/>
+            </g>
+            <!-- 頭 -->
+            <path d="M120 34 C178 34 204 74 198 114 C192 154 160 186 120 188 C80 186 48 154 42 114 C36 74 62 34 120 34Z" fill="#8fd18a"/>
+            <path d="M120 34 C160 34 184 56 192 84 C170 60 140 50 120 50 C100 50 70 60 48 84 C56 56 80 34 120 34Z" fill="#a6e0a0"/>
+            <!-- ほっぺの模様 -->
+            <circle cx="66" cy="146" r="5" fill="#6cb866"/><circle cx="78" cy="156" r="3.5" fill="#6cb866"/>
+            <circle cx="174" cy="146" r="5" fill="#6cb866"/><circle cx="162" cy="156" r="3.5" fill="#6cb866"/>
+            <!-- 目 -->
+            <g class="eyes">
+              <ellipse cx="88" cy="112" rx="26" ry="15" transform="rotate(28 88 112)" fill="#141414"/>
+              <ellipse cx="152" cy="112" rx="26" ry="15" transform="rotate(-28 152 112)" fill="#141414"/>
+              <circle cx="80" cy="104" r="5" fill="#fff"/><circle cx="144" cy="104" r="5" fill="#fff"/>
+              <circle cx="92" cy="118" r="2.5" fill="#fff" opacity=".7"/><circle cx="156" cy="118" r="2.5" fill="#fff" opacity=".7"/>
+            </g>
+            <!-- 鼻の穴 -->
+            <ellipse cx="114" cy="140" rx="2.2" ry="1.6" fill="#4f8f4b"/><ellipse cx="126" cy="140" rx="2.2" ry="1.6" fill="#4f8f4b"/>
+            <!-- 口 -->
+            <g class="mouth">
+              <ellipse cx="120" cy="160" rx="12" ry="5" fill="#3b1f4a"/>
+              <ellipse cx="120" cy="163" rx="6" ry="2" fill="#e86a92"/>
+            </g>
+          </g>
+         
+         </g>
         </svg>
       </div>
     </div>
@@ -238,6 +388,7 @@
 <!-- ===== 結果画面 ===== -->
 <section id="result" class="screen">
   <h1 class="title">🌸 面接終了 おつかれさまでした</h1>
+  <div class="unlock" id="unlockMsg"></div>
   <div class="summary" id="summary"></div>
   <div class="list" id="resultList"></div>
   <div class="actions">
@@ -248,6 +399,22 @@
 </section>
 
 <div class="toast" id="toast"></div>
+<div class="modal" id="whoModal">
+  <div class="modal-box who-box">
+    <div class="who-title">面接官を選ぶ <small id="clearInfo"></small></div>
+    <div class="whos" id="whos"></div>
+    <button class="secondary" id="whoClose">閉じる</button>
+  </div>
+</div>
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <p id="modalMsg"></p>
+    <div class="modal-btns">
+      <button class="secondary" id="modalNo">キャンセル</button>
+      <button class="primary" id="modalYes">OK</button>
+    </div>
+  </div>
+</div>
 
 <script>
 (() => {
@@ -356,6 +523,48 @@
     });
   });
 
+  /* ===== 面接官（クリア回数で解放） ===== */
+  const WHO = [
+    { id:"uncle", name:"おじさん先生", need:0 },
+    { id:"woman", name:"女性の先生",   need:1 },
+    { id:"young", name:"若手の先生",   need:2 },
+    { id:"alien", name:"宇宙人",       need:3 }
+  ];
+  const whoName = id => WHO.find(w => w.id === id).name;
+  let clears = 0, who = "uncle", actualWho = "uncle";
+  try { clears = parseInt(localStorage.getItem("mensetsu_clears"), 10) || 0; } catch(e) {}
+  try { const w = localStorage.getItem("mensetsu_who"); if (WHO.some(x => x.id === w)) who = w; } catch(e) {}
+  const unlocked = w => clears >= WHO.find(x => x.id === w).need;
+  if (!unlocked(who)) who = "uncle";
+  const FIG_SVG = id => document.getElementById(id + "Fig").innerHTML;
+
+  function renderWhos() {
+    $("clearInfo").textContent = `（クリア ${clears}回）`;
+    $("whos").innerHTML = WHO.map(w => {
+      const ok = unlocked(w.id);
+      return `<button class="who ${ok ? "" : "locked"} ${w.id === who ? "on" : ""}" data-who="${w.id}">
+        <svg viewBox="20 0 200 270">${FIG_SVG(w.id)}</svg>
+        <span class="wn">${ok ? w.name : "？？？"}</span>
+        <span class="wl">${ok ? (w.id === who ? "選択中" : "タップで選択") : `🔒 あと${w.need - clears}回クリア`}</span>
+      </button>`;
+    }).join("");
+    $("whos").querySelectorAll(".who").forEach(b => b.addEventListener("click", () => {
+      const id = b.dataset.who;
+      if (!unlocked(id)) { toast(`あと${WHO.find(x => x.id === id).need - clears}回面接をクリアすると解放されます`); return; }
+      who = id;
+      try { localStorage.setItem("mensetsu_who", who); } catch(e) {}
+      renderWhos();
+      setTimeout(() => $("whoModal").classList.remove("show"), 250); // 選んだら閉じる
+    }));
+    // スタート画面の「面接官を変更する」ボタンの表示
+    $("whoBtnFig").innerHTML = FIG_SVG(who);
+    $("whoBtnName").textContent = whoName(who);
+  }
+  renderWhos();
+  $("whoBtn").addEventListener("click", () => { renderWhos(); $("whoModal").classList.add("show"); });
+  $("whoClose").addEventListener("click", () => $("whoModal").classList.remove("show"));
+  $("whoModal").addEventListener("click", e => { if (e.target === $("whoModal")) $("whoModal").classList.remove("show"); });
+
   /* ===== 回答方法セレクタ ===== */
   const mseg = $("methodSeg");
   mseg.querySelectorAll("button").forEach(b => {
@@ -442,6 +651,11 @@
     records = []; idx = 0;
     $("modeBadge").textContent = MODE_NAME[m] + (method === "voice" ? "｜🎤 発声" : "｜✍️ 入力");
     $("interview").classList.toggle("voice", method === "voice");
+    actualWho = who;
+    isAlien = actualWho === "alien";
+    $("avatar").dataset.who = actualWho;
+    $("interview").classList.toggle("alien", isAlien);
+    initAudio();
     $("nextBtn").textContent = method === "voice" ? "話し終えた / 次の質問へ ▶" : "回答完了 / 次の質問へ ▶";
     if (method === "voice") {
       const ok = await prepareMic();
@@ -452,21 +666,186 @@
     showQuestion();
   }
 
+  /* ===== 喋る演出：一文字ずつ表示＋口パク ===== */
+  let isAlien = false, speakTimer = null, audioCtx = null, soundOn = true;
+  try { soundOn = localStorage.getItem("mensetsu_sound") !== "off"; } catch(e) {}
+  const renderSoundBtn = () => { $("soundBtn").textContent = soundOn ? "🔊 声あり" : "🔇 声なし"; };
+  renderSoundBtn();
+  $("soundBtn").addEventListener("click", () => {
+    soundOn = !soundOn; renderSoundBtn(); initAudio();
+    if (!soundOn && voice) { voice.stop(); voice = null; }
+    try { localStorage.setItem("mensetsu_sound", soundOn ? "on" : "off"); } catch(e) {}
+  });
+  function initAudio() {
+    // iPadでは音はタップ操作の中で準備する必要がある
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+    } catch (e) { audioCtx = null; }
+  }
+  function blip() {
+    // 宇宙人の「ピポパ」声
+    if (!audioCtx || !soundOn) return;
+    try {
+      const t = audioCtx.currentTime, o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(700 + Math.random() * 700, t);
+      o.frequency.exponentialRampToValueAtTime(400 + Math.random() * 300, t + 0.07);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.05, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t); o.stop(t + 0.09);
+    } catch (e) {}
+  }
+  /* ===== おじさんの声（Web Audioで合成） =====
+     低いブザー音を「声帯」、2つのフィルターを「口の形」にして、
+     文字ごとの母音（あいうえお）に合わせて口の形を変えることで「あー」「おぃ」っぽい声にする */
+  const FORMANT = { a:[750,1150], i:[300,2100], u:[340,1250], e:[480,1800], o:[480,850], n:[260,1000] };
+  const VOWEL_OF = (() => {
+    const t = {
+      a:"あかさたなはまやらわがざだばぱぁゃゎ", i:"いきしちにひみりぎじぢびぴぃ", u:"うくすつぬふむゆるぐずづぶぷぅゅ",
+      e:"えけせてねへめれげぜでべぺぇ", o:"おこそとのほもよろをごぞどぼぽぉょ", n:"ん"
+    }, m = {};
+    for (const v in t) for (const ch of t[v]) {
+      m[ch] = v;
+      m[String.fromCharCode(ch.charCodeAt(0) + 0x60)] = v; // カタカナも同じ母音
+    }
+    return m;
+  })();
+  const vowelOf = (ch, prev) => {
+    if (ch === "ー") return prev || "a";
+    if (ch === "っ" || ch === "ッ") return null;              // 小さい「っ」は無音
+    return VOWEL_OF[ch] || "aiueo"[Math.floor(Math.random() * 5)]; // 漢字などはランダム
+  };
+
+  // 面接官ごとの声の設定
+  //  base:声の高さ(Hz) fm:口の響きの倍率 vib:声の揺れ lp:こもり具合 speed:1文字のミリ秒 fillers:しゃべり出し
+  const VOICE = {
+    uncle: { base:100, fm:1.00, vib:2.5, lp:2800, vol:.55, speed:60, fillerRate:.75, fillers:["e","a","n"], fillerPitch:.92 },
+    woman: { base:225, fm:1.17, vib:4.0, lp:4200, vol:.42, speed:52, fillerRate:.45, fillers:["n","e"],     fillerPitch:1.05 },
+    young: { base:150, fm:1.07, vib:1.5, lp:3600, vol:.50, speed:46, fillerRate:.35, fillers:["a","e"],     fillerPitch:1.08 }
+  };
+  function createVoice(prof) {
+    if (!audioCtx || !soundOn || !prof) return null;
+    try {
+      const ctx = audioCtx, t = ctx.currentTime;
+      const base = prof.base * (0.95 + Math.random() * 0.1);
+      const src = ctx.createOscillator(); src.type = "sawtooth"; src.frequency.value = base;
+      const vib = ctx.createOscillator(); vib.frequency.value = 5;  // 少し揺れる声
+      const vibG = ctx.createGain(); vibG.gain.value = prof.vib;
+      vib.connect(vibG); vibG.connect(src.frequency);
+      const f1 = ctx.createBiquadFilter(); f1.type = "bandpass"; f1.Q.value = 5;
+      const f2 = ctx.createBiquadFilter(); f2.type = "bandpass"; f2.Q.value = 7;
+      const g1 = ctx.createGain(); g1.gain.value = 1;
+      const g2 = ctx.createGain(); g2.gain.value = 0.45;
+      const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = prof.lp;
+      const out = ctx.createGain(); out.gain.value = 0;
+      src.connect(f1); f1.connect(g1); g1.connect(lp);
+      src.connect(f2); f2.connect(g2); g2.connect(lp);
+      lp.connect(out); out.connect(ctx.destination);
+      src.start(t); vib.start(t);
+      const VOL = prof.vol;
+      return {
+        // 母音 v を発音。pitchMul で声の高さ（語尾の上がり下がり）
+        say(v, pitchMul = 1) {
+          const now = ctx.currentTime, F1 = FORMANT[v][0] * prof.fm, F2 = FORMANT[v][1] * prof.fm;
+          f1.frequency.setTargetAtTime(F1, now, 0.02);
+          f2.frequency.setTargetAtTime(F2, now, 0.02);
+          src.frequency.setTargetAtTime(base * pitchMul * (0.96 + Math.random() * 0.08), now, 0.04);
+          // 一瞬だけ音を弱めて「子音で区切られた」感じを出す
+          out.gain.cancelScheduledValues(now);
+          out.gain.setTargetAtTime(VOL * 0.25, now, 0.006);
+          out.gain.setTargetAtTime(v === "n" ? VOL * 0.5 : VOL, now + 0.018, 0.015);
+        },
+        hush() { const now = ctx.currentTime; out.gain.cancelScheduledValues(now); out.gain.setTargetAtTime(0, now, 0.03); },
+        stop() {
+          const now = ctx.currentTime;
+          out.gain.cancelScheduledValues(now); out.gain.setTargetAtTime(0, now, 0.03);
+          src.stop(now + 0.3); vib.stop(now + 0.3);
+        }
+      };
+    } catch (e) { return null; }
+  }
+
+  const currentMouth = () => document.querySelector(`#${actualWho}Fig .mouth`);
+  function setMouth(open) {
+    const m = currentMouth();
+    if (m) m.style.transform = `scale(${1 + open * 0.25}, ${0.35 + open * 1.6})`;
+  }
+  const MOUTH_OPEN = { a:1, o:.8, e:.6, u:.35, i:.3, n:.1 };
+  let voice = null;
+  function stopSpeaking() {
+    clearInterval(speakTimer); speakTimer = null;
+    if (voice) { voice.stop(); voice = null; }
+    document.querySelectorAll("#qText .c").forEach(c => c.classList.add("on"));
+    setMouth(0);
+    $("avatar").classList.remove("talking");
+  }
+  function speak(text) {
+    stopSpeaking();
+    const qt = $("qText");
+    qt.textContent = "";
+    const chars = [...text].map(ch => {
+      const s = document.createElement("span");
+      s.className = "c"; s.textContent = ch; qt.appendChild(s); return s;
+    });
+    fitBubble(); // 全文を配置してからサイズ調整（途中でレイアウトが動かない）
+    $("avatar").classList.add("talking");
+    let i = 0, pause = 0, prevV = "a";
+    const prof = VOICE[actualWho];
+    const speed = isAlien ? 45 : prof.speed; // 1文字あたりのミリ秒
+    if (!isAlien) {
+      voice = createVoice(prof);
+      // しゃべり出しの「えー」「あー」「んー」など（たまに無し）
+      if (Math.random() < prof.fillerRate) {
+        const filler = prof.fillers[Math.floor(Math.random() * prof.fillers.length)];
+        pause = 6;
+        setMouth(MOUTH_OPEN[filler] * 0.7);
+        if (voice) voice.say(filler, prof.fillerPitch);
+      }
+    }
+    speakTimer = setInterval(() => {
+      if (pause > 0) {
+        pause--;
+        if (pause === 0) { setMouth(0); if (voice) voice.hush(); }
+        return;
+      }
+      if (i >= chars.length) { stopSpeaking(); return; }
+      const ch = chars[i].textContent, next = chars[i + 1] ? chars[i + 1].textContent : "";
+      chars[i].classList.add("on");
+      i++;
+      if ("、。？！?!」「（）".includes(ch)) {
+        setMouth(0);
+        if (voice) voice.hush();
+        pause = "。？！?!".includes(ch) ? 7 : 3; // 句読点で口を閉じて一呼吸
+        return;
+      }
+      if (isAlien) {
+        setMouth(0.25 + Math.random() * 0.75);
+        if (i % 2) blip();
+        return;
+      }
+      const v = vowelOf(ch, prevV);
+      if (!v) { setMouth(0.1); if (voice) voice.hush(); return; }
+      prevV = v;
+      // 語尾の上がり下がり：「〜か？」は上げる、文末は下げる
+      let pitch = 1 - Math.min(0.08, i * 0.002);
+      if ("？?".includes(next) || (ch === "か" && "。".includes(next))) pitch = 1.22;
+      else if ("。".includes(next)) pitch *= 0.88;
+      setMouth(MOUTH_OPEN[v] * (0.75 + Math.random() * 0.25));
+      if (voice) voice.say(v, pitch);
+    }, speed);
+  }
+  // 吹き出しをタップすると全文をすぐ表示
+  $("bubble").addEventListener("click", () => { if (speakTimer) stopSpeaking(); });
+
   /* ===== 質問表示 + タイマー ===== */
   function showQuestion() {
     const q = questions[idx];
     $("progressText").textContent = `第${idx + 1}問 / ${questions.length}`;
     $("barFill").style.width = (idx / questions.length * 100) + "%";
-    const qt = $("qText");
-    qt.textContent = q;
-    qt.classList.remove("pop"); void qt.offsetWidth; qt.classList.add("pop");
-    fitBubble();
-
-    // 話すアニメーション（文字数に応じた長さ）
-    const av = $("avatar");
-    av.classList.add("talking");
-    clearTimeout(av._t);
-    av._t = setTimeout(() => av.classList.remove("talking"), Math.min(3500, 600 + q.length * 35));
+    speak(q);
 
     $("answerInput").value = "";
     updateChars();
@@ -499,14 +878,39 @@
   const updateChars = () => { $("charCount").textContent = $("answerInput").value.length + "文字"; };
   $("answerInput").addEventListener("input", updateChars);
 
+  /* ===== 確認画面（標準のconfirmはアプリ内ブラウザ等でブロックされるため自作） ===== */
+  function askConfirm(msg, okLabel = "OK") {
+    return new Promise(resolve => {
+      const m = $("modal");
+      $("modalMsg").textContent = msg;
+      $("modalYes").textContent = okLabel;
+      m.classList.add("show");
+      const done = v => {
+        m.classList.remove("show");
+        $("modalYes").onclick = $("modalNo").onclick = m.onclick = null;
+        resolve(v);
+      };
+      $("modalYes").onclick = e => { e.stopPropagation(); done(true); };
+      $("modalNo").onclick = e => { e.stopPropagation(); done(false); };
+      m.onclick = e => { if (e.target === m) done(false); }; // 外側タップでキャンセル
+    });
+  }
+
   /* ===== 次へ ===== */
   let busy = false;
   $("nextBtn").addEventListener("click", async () => {
     if (busy) return;
     const ans = method === "text" ? $("answerInput").value.trim() : "";
-    if (method === "text" && !ans && !confirm("回答が未入力です。このまま次へ進みますか？")) return;
-    const sec = elapsed();
+    let sec = elapsed();
+    if (method === "text" && !ans) {
+      busy = true;
+      const ok = await askConfirm("回答が未入力です。\nこのまま次へ進みますか？", "次へ進む");
+      busy = false;
+      if (!ok) return;
+      sec = elapsed();
+    }
     clearInterval(tick);
+    stopSpeaking();
     busy = true;
     const audio = method === "voice" ? await stopRec() : null;
     busy = false;
@@ -520,14 +924,22 @@
     else finish();
   });
 
-  $("quitBtn").addEventListener("click", () => {
-    if (!confirm("面接を中断してモード選択に戻りますか？\n（ここまでの記録は消えます）")) return;
-    clearInterval(tick); releaseMic(); show("start");
+  $("quitBtn").addEventListener("click", async () => {
+    if (!(await askConfirm("面接を中断してモード選択に戻りますか？\n（ここまでの記録は消えます）", "中断する"))) return;
+    clearInterval(tick); stopSpeaking(); releaseMic(); show("start");
   });
 
   /* ===== 結果 ===== */
   function finish() {
     releaseMic();
+    const before = clears;
+    clears++;
+    try { localStorage.setItem("mensetsu_clears", clears); } catch(e) {}
+    const newly = WHO.filter(w => w.need > before && w.need <= clears);
+    const um = $("unlockMsg");
+    um.textContent = newly.length ? `🎉 新しい面接官「${newly.map(w => w.name).join("・")}」が解放されました！ モード選択画面で選べます` : "";
+    um.classList.toggle("show", newly.length > 0);
+    renderWhos();
     $("barFill").style.width = "100%";
     const secs = records.map(r => r.sec);
     const total = secs.reduce((a, b) => a + b, 0);
@@ -535,9 +947,10 @@
     $("summary").innerHTML = [
       ["モード", MODE_NAME[mode].replace(/^\S+\s/, "") + (method === "voice" ? "（発声）" : "（入力）")],
       ["合計時間", mmss(total)],
-      ["1問あたり平均", avg + "秒"],
-      ["最長", Math.max(...secs) + "秒"]
-    ].map(([k, v]) => `<div class="stat"><div class="k">${k}</div><div class="v">${esc(String(v))}</div></div>`).join("");
+      ["平均（1問）", avg + "秒"],
+      ["最長", Math.max(...secs) + "秒"],
+      ["面接官", whoName(actualWho)]
+    ].map(([k, v]) => `<div class="stat"><div class="k">${k}</div><div class="v ${/^[\d:]+秒?$/.test(v) ? "" : "t"}">${esc(String(v))}</div></div>`).join("");
 
     $("resultList").innerHTML = records.map((r, i) => {
       const cls = r.sec >= 120 ? "long" : r.sec <= 30 ? "fast" : "";
